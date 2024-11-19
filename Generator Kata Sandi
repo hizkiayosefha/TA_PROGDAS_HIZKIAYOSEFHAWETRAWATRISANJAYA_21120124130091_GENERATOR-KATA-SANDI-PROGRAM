@@ -1,0 +1,65 @@
+import random
+import tkinter as tk
+from tkinter import messagebox
+
+class PasswordGenerator:
+    def _init_(self, root):
+        self.root = root
+        self.root.title("Generator Kata Sandi")
+
+        self.label_length = tk.Label(root, text="Panjang Kata Sandi:")
+        self.label_length.pack()
+        self.entry_length = tk.Entry(root)
+        self.entry_length.pack()
+
+        self.var = tk.IntVar()
+        self.radio_all = tk.Radiobutton(root, text="Semua Karakter", variable=self.var, value=1)
+        self.radio_all.pack()
+        self.radio_alpha = tk.Radiobutton(root, text="Huruf Saja", variable=self.var, value=2)
+        self.radio_alpha.pack()
+        self.radio_numeric = tk.Radiobutton(root, text="Angka Saja", variable=self.var, value=3)
+        self.radio_numeric.pack()
+        self.radio_alphanumeric = tk.Radiobutton(root, text="Huruf dan Angka", variable=self.var, value=4)
+        self.radio_alphanumeric.pack()
+
+        self.button_generate = tk.Button(root, text="Generate", command=self.generate_password)
+        self.button_generate.pack()
+
+        self.text_password = tk.Text(root, height=2)
+        self.text_password.pack()
+
+        self.button_copy = tk.Button(root, text="Salin", command=self.copy_to_clipboard)
+        self.button_copy.pack()
+
+    def generate_password(self):
+        try:
+            length = int(self.entry_length.get())
+            if length <= 0:
+                messagebox.showerror("Error", "Panjang kata sandi harus lebih dari 0")
+                return
+
+            char_set = ''
+            if self.var.get() == 1:
+                char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
+            elif self.var.get() == 2:
+                char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+            elif self.var.get() == 3:
+                char_set = '0123456789'
+            elif self.var.get() == 4:
+                char_set = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+
+            password = ''.join(random.choice(char_set) for _ in range(length))
+            self.text_password.delete('1.0', tk.END)
+            self.text_password.insert(tk.END, password)
+        except ValueError:
+            messagebox.showerror("Error", "Masukkan panjang kata sandi yang valid")
+
+    def copy_to_clipboard(self):
+        self.root.clipboard_clear()
+        self.root.clipboard_append(self.text_password.get('1.0', tk.END))
+        messagebox.showinfo("Info", "Kata sandi telah disalin")
+
+if _name_ == "_main_":
+    root = tk.Tk()
+    app = PasswordGenerator(root)
+    root.mainloop()

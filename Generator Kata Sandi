@@ -3,39 +3,61 @@ import tkinter as tk
 from tkinter import messagebox
 
 class PasswordGenerator:
-    def _init_(self, root):
+    def __init__(self, root):
         self.root = root
         self.root.title("Generator Kata Sandi")
+        self.root.configure(bg="#bed6ea")
 
-        self.label_length = tk.Label(root, text="Panjang Kata Sandi:")
-        self.label_length.pack()
-        self.entry_length = tk.Entry(root)
-        self.entry_length.pack()
+        self.font_style = ("Times New Roman", 12)
+
+        self.label_length = tk.Label(root, text="Panjang Kata Sandi:", bg="#bed6ea", font=self.font_style)
+        self.label_length.grid(row=0, column=0, padx=15, pady=10, sticky="w")
+        self.entry_length = tk.Entry(root, font=self.font_style)
+        self.entry_length.grid(row=0, column=1, padx=15, pady=10)
 
         self.var = tk.IntVar()
-        self.radio_all = tk.Radiobutton(root, text="Semua Karakter", variable=self.var, value=1)
-        self.radio_all.pack()
-        self.radio_alpha = tk.Radiobutton(root, text="Huruf Saja", variable=self.var, value=2)
-        self.radio_alpha.pack()
-        self.radio_numeric = tk.Radiobutton(root, text="Angka Saja", variable=self.var, value=3)
-        self.radio_numeric.pack()
-        self.radio_alphanumeric = tk.Radiobutton(root, text="Huruf dan Angka", variable=self.var, value=4)
-        self.radio_alphanumeric.pack()
 
-        self.button_generate = tk.Button(root, text="Generate", command=self.generate_password)
-        self.button_generate.pack()
+        self.radio_all = tk.Radiobutton(
+            root, text="Semua Karakter", variable=self.var, value=1, bg="#bed6ea", font=self.font_style
+        )
+        self.radio_all.grid(row=1, column=0, columnspan=2, padx=15, pady=5, sticky="w")
 
-        self.text_password = tk.Text(root, height=2)
-        self.text_password.pack()
+        self.radio_alpha = tk.Radiobutton(
+            root, text="Huruf Saja", variable=self.var, value=2, bg="#bed6ea", font=self.font_style
+        )
+        self.radio_alpha.grid(row=2, column=0, columnspan=2, padx=15, pady=5, sticky="w")
 
-        self.button_copy = tk.Button(root, text="Salin", command=self.copy_to_clipboard)
-        self.button_copy.pack()
+        self.radio_numeric = tk.Radiobutton(
+            root, text="Angka Saja", variable=self.var, value=3, bg="#bed6ea", font=self.font_style
+        )
+        self.radio_numeric.grid(row=3, column=0, columnspan=2, padx=15, pady=5, sticky="w")
+
+        self.radio_alphanumeric = tk.Radiobutton(
+            root, text="Huruf dan Angka", variable=self.var, value=4, bg="#bed6ea", font=self.font_style
+        )
+        self.radio_alphanumeric.grid(row=4, column=0, columnspan=2, padx=15, pady=5, sticky="w")
+
+        self.button_generate = tk.Button(
+            root, text="Generate", command=self.generate_password, font=self.font_style, bg="#91c2e3", relief="raised"
+        )
+        self.button_generate.grid(row=5, column=0, columnspan=2, padx=15, pady=15)
+
+        self.text_password = tk.Text(root, height=2, width=35, font=self.font_style, relief="solid")
+        self.text_password.grid(row=6, column=0, columnspan=2, padx=15, pady=10)
+
+        self.button_copy = tk.Button(
+            root, text="Salin", command=self.copy_to_clipboard, font=self.font_style, bg="#91c2e3", relief="raised"
+        )
+        self.button_copy.grid(row=7, column=0, columnspan=2, padx=15, pady=15)
 
     def generate_password(self):
         try:
             length = int(self.entry_length.get())
-            if length <= 0:
-                messagebox.showerror("Error", "Panjang kata sandi harus lebih dari 0")
+            if length < 8:
+                messagebox.showerror("Error", "Panjang kata sandi tidak bisa kurang dari 8 karakter.")
+                return
+            if length > 24:
+                messagebox.showerror("Error", "Panjang kata sandi tidak bisa lebih dari 24 karakter.")
                 return
 
             char_set = ''
@@ -56,10 +78,10 @@ class PasswordGenerator:
 
     def copy_to_clipboard(self):
         self.root.clipboard_clear()
-        self.root.clipboard_append(self.text_password.get('1.0', tk.END))
+        self.root.clipboard_append(self.text_password.get('1.0', tk.END).strip())
         messagebox.showinfo("Info", "Kata sandi telah disalin")
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     root = tk.Tk()
     app = PasswordGenerator(root)
     root.mainloop()
